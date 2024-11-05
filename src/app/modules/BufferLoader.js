@@ -17,6 +17,7 @@ BufferLoader.prototype.loadBuffer = function(url, index) {
   request.open("GET", url, true);
   request.responseType = "arraybuffer";
 
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   const loader = this;
 
   request.onload = function() {

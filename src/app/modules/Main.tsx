@@ -1,12 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Clock } from "./clock";
-// import { getDefaultClockState, initAudioWindow } from "./clock";
+
+function InfoDisplay({ clock, myTime }: { clock: Clock; myTime: Date }) {
+  return (
+    <>
+      <div>
+        Current Time: <strong>{myTime.toLocaleTimeString()}</strong>
+      </div>
+      <div>
+        BAR: <strong>{Math.ceil(clock.currentTick / 4)}</strong>
+      </div>
+      <div>
+        Bar Beat: <strong>{((clock.currentTick - 2) % 4) + 1}</strong>
+      </div>
+      <div>
+        Current Time: <strong>{clock.audioContext.currentTime}</strong>
+      </div>
+      <div>
+        Next Beat Time: <strong>{clock.nextTime}</strong>
+      </div>
+      <div>
+        Next Time ahead:{" "}
+        <strong>{clock.tickTimer < clock.nextTime ? "true" : "false"}</strong>
+      </div>
+      {/* <div> */}
+        {/* Loop Schedule Queue: <strong>{currentTick}</strong> */}
+      {/* </div> */}
+    </>
+  );
+}
 
 export function Main() {
   const [clock, setClock] = useState<Clock | undefined>();
 
+  const [myTime, setMyTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerID = setInterval(() => tick(), 16);
+    return () => clearInterval(timerID);
+  });
+
+  function tick() {
+    setMyTime(new Date());
+  }
+
+  // useMemo(() => clock?.currentTick, [clock?.currentTick]);
   return (
     <div>
       <button
@@ -23,8 +63,9 @@ export function Main() {
       </button>
       {clock && (
         <>
-          <div>
-            Tick: <strong>{clock.currentTick}</strong>
+          <InfoDisplay myTime={myTime} clock={clock} />
+          {/* <div>
+            Tick: <strong>{currentTick}</strong>
           </div>
           <div>
             Bar Beat: <strong>{((clock.currentTick - 2) % 4) + 1}</strong>
@@ -44,7 +85,7 @@ export function Main() {
           <div>
             Loop Schedule Queue:{" "}
             <strong>{JSON.stringify(clock.playingTracks)}</strong>
-          </div>
+          </div> */}
 
           <button onClick={() => clock.startTrack(0)}>[DRUM KICK] </button>
           <button onClick={() => clock.startTrack(1)}>[DRUM CLAP] </button>
